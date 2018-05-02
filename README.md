@@ -2,4 +2,4 @@
 
 ## In development
 
-Let registered customers view and edit their comOrder addresses.
+Let registered customers view and edit their saved comAddress addresses.
