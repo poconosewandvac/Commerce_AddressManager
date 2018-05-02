@@ -1,0 +1,5 @@
+++ AddressManager for Commerce 0.10.8-pl
+
+++ Commerce_AddressManager 0.0.1 dev
+++ Released on ??/??/????
+- 
