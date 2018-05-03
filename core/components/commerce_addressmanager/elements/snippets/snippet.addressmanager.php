@@ -6,6 +6,10 @@
  * https://github.com/poconosewandvac/Commerce_AddressManager
  */
 
+// Properties
+$tpl = $modx->getOption("tpl", $scriptProperties, "AddressManagerRow");
+$tplWrapper = $modx->getOption("tplWrapper", $scriptProperties, "AddressManagerWrap");
+
 // Check if user is logged in
 $user = $modx->user->get('id');
 if (!$user) {
@@ -21,7 +25,8 @@ if ($addressMgr->commerce->isDisabled()) {
 
 // Load user's addresses
 $addresses = $addressMgr->getAddresses($user);
-
-foreach ($addresses as $a) {
-    print_r($a->toArray());
+foreach ($addresses as $address) {
+    $rows .= $modx->getChunk($tpl, $address->toArray());
 }
+
+return $modx->getChunk($tplWrapper, ["output" => $rows]);
