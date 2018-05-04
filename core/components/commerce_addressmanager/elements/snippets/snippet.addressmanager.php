@@ -24,9 +24,14 @@ if ($addressMgr->commerce->isDisabled()) {
 }
 
 // Load user's addresses
-$addresses = $addressMgr->getAddresses($user);
-foreach ($addresses as $address) {
-    $rows .= $modx->getChunk($tpl, $address->toArray());
+$shipping = $addressMgr->getAddresses($user, "shipping");
+foreach ($shipping as $a) {
+    $shippingAddresses .= $modx->getChunk($tpl, $a->toArray());
 }
 
-return $modx->getChunk($tplWrapper, ["output" => $rows]);
+$billing = $addressMgr->getAddresses($user, "billing");
+foreach ($billing as $a) {
+    $billingAddresses .= $modx->getChunk($tpl, $a->toArray());
+}
+
+return $modx->getChunk($tplWrapper, ["shipping" => $shippingAddresses, "billing" => $billingAddresses]);

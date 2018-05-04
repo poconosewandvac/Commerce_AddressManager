@@ -41,14 +41,20 @@ class AddressManager {
      * Gets the user's addresses from comAddress.
      * 
      * @param int $user User ID to reference the address
+     * @param string $type Type of address, shipping or billing
      * @return comAddress xPDOObjects collection
      */
-    public function getAddresses($user) {
+    public function getAddresses($user, $type) {
         $query = $this->modx->newQuery('comAddress');
+        $query->select('comOrderAddress.type');
+        $query->select($this->modx->getSelectColumns('comAddress', 'comAddress'));
+        $query->innerJoin('comOrderAddress','comOrderAddress', ["comAddress.id = comOrderAddress.address"]);
         $query->where([
-            'user' => $user,
-            'remember' => 1
+            'comOrderAddress.type:=' => $type,
+            'comAddress.user:=' => $user,
+            'comAddress.remember:=' => 1
         ]);
+
         return $this->modx->getCollection('comAddress', $query);
     }
 }
