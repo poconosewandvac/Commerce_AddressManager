@@ -9,12 +9,14 @@
 
 class AddressManager {
     public $modx;
+    public $user;
     public $commerce;
     public $config = [];
 
     public function __construct(modX &$modx, array $config = array()) {
         // Initialize AddressManager
         $this->modx =& $modx;
+        $this->user = $config['user'];
         $basePath = $this->modx->getOption('commerce_addressmanager.core_path', $config, $this->modx->getOption('core_path').'components/commerce_addressmanager/');
         $assetsUrl = $this->modx->getOption('commerce_addressmanager.assets_url', $config, $this->modx->getOption('assets_url').'components/commerce_addressmanager/');
 
@@ -37,24 +39,48 @@ class AddressManager {
         $this->commerce = $this->modx->getService('commerce', 'Commerce', $commercePath, $commerceParams);
     }
 
+    public function getUser() {
+        return $this->user;
+    }
+
     /**
      * Gets the user's addresses from comAddress.
      * 
-     * @param int $user User ID to reference the address
      * @param string $type Type of address, shipping or billing
      * @return comAddress xPDOObjects collection
      */
-    public function getAddresses($user, $type) {
+    public function getAddresses($type) {
         $query = $this->modx->newQuery('comAddress');
         $query->select('comOrderAddress.type');
         $query->select($this->modx->getSelectColumns('comAddress', 'comAddress'));
         $query->innerJoin('comOrderAddress','comOrderAddress', ["comAddress.id = comOrderAddress.address"]);
         $query->where([
             'comOrderAddress.type:=' => $type,
-            'comAddress.user:=' => $user,
+            'comAddress.user:=' => $this->getUser(),
             'comAddress.remember:=' => 1
         ]);
 
         return $this->modx->getCollection('comAddress', $query);
+    }
+
+    /**
+     * "Deletes" a user's address. It only sets the remember column to 0 as to keep old orders displaying the same.
+     * 
+     * @param int $id comAddress id
+     * @return void
+     */
+    public function deleteAddress($id) {
+        $query = $this->modx->newQuery('comAddress');
+        $query->where([
+            'id' => $id,
+            'user' => $this->getUser()
+        ]);
+
+        $address = $this->modx->getObject('comAddress', $query);
+
+        if ($address) {
+            $address->set('remember', 0);
+            $address->save();
+        }
     }
 }
