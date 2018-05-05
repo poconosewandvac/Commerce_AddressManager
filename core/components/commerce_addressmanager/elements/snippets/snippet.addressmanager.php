@@ -8,6 +8,7 @@
 
 // Properties
 $tpl = $modx->getOption("tpl", $scriptProperties, "AddressManagerRow");
+$editTpl = $modx->getOption("editTpl", $scriptProperties, "AddressManagerEdit");
 $tplWrapper = $modx->getOption("tplWrapper", $scriptProperties, "AddressManagerWrap");
 
 // Check if user is logged in
@@ -23,7 +24,16 @@ if ($addressMgr->commerce->isDisabled()) {
     return $modx->lexicon('commerce.mode.disabled.message');
 }
 
-if (isset($_REQUEST["delete"])) {
+if (isset($_REQUEST["edit"]) && (int)$_REQUEST["edit"] > 0) {
+    $edit = $addressMgr->getAddress($_REQUEST["edit"]);
+    
+    if ($addressMgr) {
+        return $modx->getChunk($editTpl, $edit->toArray());
+    }
+}
+
+
+if (isset($_REQUEST["delete"]) && (int)$_REQUEST["edit"] > 0) {
     $addressMgr->deleteAddress($_REQUEST["delete"]);
 }
 

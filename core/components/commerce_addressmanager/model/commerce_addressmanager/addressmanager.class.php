@@ -64,6 +64,22 @@ class AddressManager {
     }
 
     /**
+     * Gets a specific user address
+     * 
+     * @param int $id comAddress id
+     * @return comAddress xPDOObject
+     */
+    public function getAddress($id) {
+        $query = $this->modx->newQuery('comAddress');
+        $query->where([
+            'id' => $id,
+            'user' => $this->getUser()
+        ]);
+
+        return $this->modx->getObject('comAddress', $query);
+    }
+
+    /**
      * "Deletes" a user's address. It only sets the remember column to 0 as to keep old orders displaying the same.
      * 
      * @param int $id comAddress id
