@@ -11,6 +11,8 @@ $tpl = $modx->getOption("tpl", $scriptProperties, "AddressManagerRow");
 $editTpl = $modx->getOption("editTpl", $scriptProperties, "AddressManagerEdit");
 $tplWrapper = $modx->getOption("tplWrapper", $scriptProperties, "AddressManagerWrap");
 $values = $modx->getOption("values", $scriptProperties, $_REQUEST["values"]);
+$registerCss = (bool)$modx->getOption("registerCss", $scriptProperties, true);
+$registerJs = (bool)$modx->getOption("registerJs", $scriptProperties, true);
 
 // Check if user is logged in
 $user = $modx->user->get('id');
@@ -24,6 +26,8 @@ if (!($addressMgr instanceof AddressManager) && !($addressMgr->commerce instance
 if ($addressMgr->commerce->isDisabled()) {
     return $modx->lexicon('commerce.mode.disabled.message');
 }
+
+$addressMgr->registerAssets($registerCss, $registerJs);
 
 if (isset($_REQUEST["edit"]) && (int)$_REQUEST["edit"] > 0) {
     $edit = $addressMgr->getAddress($_REQUEST["edit"]);
