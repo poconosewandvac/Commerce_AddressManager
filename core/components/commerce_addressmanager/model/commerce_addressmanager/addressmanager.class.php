@@ -13,6 +13,12 @@ class AddressManager {
     public $commerce;
     public $config = [];
 
+    /**
+     * Initialize modX, Commerce, and user
+     *
+     * @param modX $modx
+     * @param array $config
+     */
     public function __construct(modX &$modx, array $config = array()) {
         // Initialize AddressManager
         $this->modx =& $modx;
@@ -49,40 +55,6 @@ class AddressManager {
     }
 
     /**
-     * Runs validation of address
-     * 
-     * @param string $type type of address shipping|billing 
-     * @param comAddress $address comAddress instance
-     * @return bool
-     */
-    public function validate($type, \comAddress $address)
-    {
-        /** @var AddressValidation $event */
-        $event = $this->commerce->dispatcher->dispatch(\Commerce::EVENT_ADDRESS_VALIDATE, new AddressValidation($address, $type, $this->order));
-
-        if (!$event->hasAnyErrors()) {
-            return true;
-        }
-
-        /*if ($event->hasMessages()) {
-            $messages = $event->getMessages();
-            foreach ($messages as $message) {
-                $this->response->addError($message);
-            }
-        }
-
-        if ($event->hasFieldErrors()) {
-            $errors = $event->getFieldErrors();
-            foreach ($errors as $error) {
-                $this->response->addError($error->getMessage(), 400, $error->getField());
-                $this->setPlaceholder('error_' . $type . '_' . $error->getField(), $error->getMessage());
-            }
-        }*/
-
-        return false;
-    }
-
-    /**
      * Gets the user's addresses from comAddress.
      * 
      * @param string $type Type of address, shipping or billing
@@ -106,7 +78,7 @@ class AddressManager {
      * Gets a specific user address
      * 
      * @param int $id comAddress id
-     * @param bool $remember get remember'd
+     * @param int $remember 0|1
      * @return comAddress xPDOObject
      */
     public function getAddress($id, $remember = 1) {
@@ -145,7 +117,7 @@ class AddressManager {
      * @return int|bool comAddress id
      */
     public function editAddress($oldAddress, $data, $type = null, $order = 0) {
-        $newAddress = array_merge($oldAddress->toArray(), $data);   
+        $newAddress = array_merge($oldAddress->toArray(), $data);
 
         // Check if the address is the same before adding another, no need for duplicates
         if ($oldAddress->toArray() === $newAddress) {
@@ -167,9 +139,8 @@ class AddressManager {
             $comAddress = $this->modx->newObject('comAddress');
             $comAddress->fromArray($newAddress);
             $comAddress->save();
-
+            
             $this->attachOrderAddress($comAddress, $type, $order);
-
             return $comAddress->get('id');
         }
     }
