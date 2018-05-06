@@ -39,8 +39,47 @@ class AddressManager {
         $this->commerce = $this->modx->getService('commerce', 'Commerce', $commercePath, $commerceParams);
     }
 
+    /**
+     * Gets the user id
+     * 
+     * @return int
+     */
     public function getUser() {
         return $this->user;
+    }
+
+    /**
+     * Runs validation of address
+     * 
+     * @param string $type type of address shipping|billing 
+     * @param comAddress $address comAddress instance
+     * @return bool
+     */
+    public function validate($type, \comAddress $address)
+    {
+        /** @var AddressValidation $event */
+        $event = $this->commerce->dispatcher->dispatch(\Commerce::EVENT_ADDRESS_VALIDATE, new AddressValidation($address, $type, $this->order));
+
+        if (!$event->hasAnyErrors()) {
+            return true;
+        }
+
+        /*if ($event->hasMessages()) {
+            $messages = $event->getMessages();
+            foreach ($messages as $message) {
+                $this->response->addError($message);
+            }
+        }
+
+        if ($event->hasFieldErrors()) {
+            $errors = $event->getFieldErrors();
+            foreach ($errors as $error) {
+                $this->response->addError($error->getMessage(), 400, $error->getField());
+                $this->setPlaceholder('error_' . $type . '_' . $error->getField(), $error->getMessage());
+            }
+        }*/
+
+        return false;
     }
 
     /**
@@ -86,17 +125,41 @@ class AddressManager {
      * @return void
      */
     public function deleteAddress($id) {
-        $query = $this->modx->newQuery('comAddress');
-        $query->where([
-            'id' => $id,
-            'user' => $this->getUser()
-        ]);
-
-        $address = $this->modx->getObject('comAddress', $query);
+        $address = $this->getAddress($id);
 
         if ($address) {
             $address->set('remember', 0);
             $address->save();
         }
+    }
+
+    /**
+     * "Edits" a user's address. Creates new address and duplicates non-edited information from the old address as to keep old orders displaying the same.
+     * 
+     * @param int $id comAddress Current address id
+     * @return int comAddress id
+     */
+    public function editAddress($id, $data) {
+        $address = $this->getAddress($id);
+        $newAddress = array_merge($address->toArray(), $data);   
+
+        echo '<pre>';
+        print_r($data);
+        echo '</pre><pre>';
+        print_r($newAddress);
+        echo '</pre>';
+
+        // Check if the address is the same before adding another
+        /* if ($address->toArray() === $newAddress) {
+            return $newAddress['id'];
+        } else {
+            $address->set('remember', 0);
+            $address->save();
+
+            $query = $this->modx->newObject('comAddress');
+            unset($newAddress['id']);
+            $query->fromArray($newAddress);
+            $query->save();
+        } */
     }
 }
