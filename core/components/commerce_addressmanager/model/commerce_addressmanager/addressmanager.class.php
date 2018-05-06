@@ -109,7 +109,7 @@ class AddressManager {
      * @param bool $remember get remember'd
      * @return comAddress xPDOObject
      */
-    public function getAddress($id, $remember = true) {
+    public function getAddress($id, $remember = 1) {
         $query = $this->modx->newQuery('comAddress');
         $query->where([
             'id' => $id,
@@ -138,18 +138,13 @@ class AddressManager {
     /**
      * "Edits" a user's address. Creates new address and duplicates non-edited information from the old address as to keep old orders displaying the same.
      * 
-     * @param int $id comAddress Current address id
+     * @param int $oldAddress comAddress Current address
      * @param array $data array of values (where key matches comAddress column name)
      * @param string $type type of address (shipping|billing)
      * @param order $order order ID to set comOrderAddress to. 
      * @return int|bool comAddress id
      */
-    public function editAddress($id, $data, $type = null, $order = 0) {
-        $oldAddress = $this->getAddress($id);
-        if (!$oldAddress) {
-            return false;
-        }
-        
+    public function editAddress($oldAddress, $data, $type = null, $order = 0) {
         $newAddress = array_merge($oldAddress->toArray(), $data);   
 
         // Check if the address is the same before adding another, no need for duplicates

@@ -30,7 +30,9 @@ if (isset($_REQUEST["edit"]) && (int)$_REQUEST["edit"] > 0) {
     
     if ($edit) {
         if (is_array($values)) {
-            $addressMgr->editAddress($_REQUEST["edit"], $values);
+            $newAddress = $addressMgr->editAddress($edit, $values);
+            $url = $modx->makeUrl($modx->resource->get('id'), '', array('edit' => $newAddress));
+            $modx->sendRedirect($url);
         }
         return $modx->getChunk($editTpl, $edit->toArray());
     }
