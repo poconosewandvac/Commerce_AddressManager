@@ -106,13 +106,15 @@ class AddressManager {
      * Gets a specific user address
      * 
      * @param int $id comAddress id
+     * @param bool $remember get remember'd
      * @return comAddress xPDOObject
      */
-    public function getAddress($id) {
+    public function getAddress($id, $remember = true) {
         $query = $this->modx->newQuery('comAddress');
         $query->where([
             'id' => $id,
-            'user' => $this->getUser()
+            'user' => $this->getUser(),
+            'remember' => $remember
         ]);
 
         return $this->modx->getObject('comAddress', $query);
@@ -137,29 +139,49 @@ class AddressManager {
      * "Edits" a user's address. Creates new address and duplicates non-edited information from the old address as to keep old orders displaying the same.
      * 
      * @param int $id comAddress Current address id
-     * @return int comAddress id
+     * @param array $data array of values (where key matches comAddress column name)
+     * @param string $type type of address (shipping|billing)
+     * @param order $order order ID to set comOrderAddress to. 
+     * @return int|bool comAddress id
      */
-    public function editAddress($id, $data) {
-        $address = $this->getAddress($id);
-        $newAddress = array_merge($address->toArray(), $data);   
+    public function editAddress($id, $data, $type = null, $order = 0) {
+        $oldAddress = $this->getAddress($id);
+        if (!$oldAddress) {
+            return false;
+        }
+        
+        $newAddress = array_merge($oldAddress->toArray(), $data);   
 
-        echo '<pre>';
-        print_r($data);
-        echo '</pre><pre>';
-        print_r($newAddress);
-        echo '</pre>';
-
-        // Check if the address is the same before adding another
-        /* if ($address->toArray() === $newAddress) {
-            return $newAddress['id'];
+        // Check if the address is the same before adding another, no need for duplicates
+        if ($oldAddress->toArray() === $newAddress) {
+            return $oldAddress->get('id');
         } else {
-            $address->set('remember', 0);
-            $address->save();
+            // Get address type if not statically set. @TODO make this into function
+            if (!$type) {
+                $comAddressType = $this->modx->newQuery('comOrderAddress');
+                $comAddressType->where([
+                    'address' => $oldAddress->get('id')
+                ]);
+                $type = $this->modx->getObject('comOrderAddress', $comAddressType)->get('type');
+            }
 
-            $query = $this->modx->newObject('comAddress');
+            $oldAddress->set('remember', 0);
+            $oldAddress->save();
+
             unset($newAddress['id']);
-            $query->fromArray($newAddress);
-            $query->save();
-        } */
+            $comAddress = $this->modx->newObject('comAddress');
+            $comAddress->fromArray($newAddress);
+            $comAddress->save();
+
+            $comOrderAddress = $this->modx->newObject('comOrderAddress');
+            $comOrderAddress->fromArray([
+                'order' => $order,
+                'type' => $type,
+                'address' => $comAddress->get('id')
+            ]);
+            $comOrderAddress->save();
+
+            return $comAddress->get('id');
+        }
     }
 }
