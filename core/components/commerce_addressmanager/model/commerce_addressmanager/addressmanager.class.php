@@ -168,15 +168,50 @@ class AddressManager {
             $comAddress->fromArray($newAddress);
             $comAddress->save();
 
-            $comOrderAddress = $this->modx->newObject('comOrderAddress');
-            $comOrderAddress->fromArray([
-                'order' => $order,
-                'type' => $type,
-                'address' => $comAddress->get('id')
-            ]);
-            $comOrderAddress->save();
+            $this->attachOrderAddress($comAddress, $type, $order);
 
             return $comAddress->get('id');
         }
+    }
+
+    /**
+     * Add an empty order address to an address 
+     * 
+     * @param int $address comAddress instance
+     * @param array $data array of values (where key matches comAddress column name)
+     * @param string $type type of address (shipping|billing)
+     * @param order $order order ID to set comOrderAddress to. 
+     * @return int|bool comAddress id
+     */
+    public function attachOrderAddress($address, $type, $order) {
+        $query = $this->modx->newObject('comOrderAddress');
+        $query->fromArray([
+            'order' => $order,
+            'type' => $type,
+            'address' => $address->get('id')
+        ]);
+        $query->save();
+    }
+
+    /**
+     * Add a user's address.
+     * 
+     * @param array $data array of values (where key matches comAddress column name)
+     * @param string $type type of address (shipping|billing)
+     * @param order $order order ID to set comOrderAddress to. 
+     * @return int|bool comAddress id
+     */
+    public function addAddress($data, $type, $order = 0) {
+        $query = $this->modx->newObject("comAddress");
+        $query->fromArray($data);
+        $query->save();
+
+        if (!$query) {
+            return false;
+        }
+
+        $this->attachOrderAddress($comAddress, $type, $order);
+
+        return $query->get('id');
     }
 }
