@@ -10,16 +10,22 @@
 }
 
 .address-manager .address-column {
-    flex: 1 0 0;
+    flex-grow: 1;
+    flex-shrink: 0;
+    flex-basis: 0%;
 }
 
 .address-manager .address-row {
     position: relative;
     margin-bottom: 10px;
-    width:100%;
-    color:#FFF;
+    width: 100%;
+    color: #FFF;
     overflow: hidden;
     padding: 0 5px;
+}
+
+.address-manager .address-row-add:not(:only-child) {
+    margin-top: 40px;
 }
 
 .address-manager .address-open {
@@ -29,6 +35,7 @@
     text-align: left;
     background: #efefef;
     line-height: 3;
+    border: none;
     transition: all 400ms;
 }
 
@@ -52,6 +59,19 @@
 .address-manager .address-open.active:after {
     background: #dcdcdc;
     content: '\2013';
+}
+
+.address-manager .address-add {
+    background: #cbf1d2;
+}
+
+.address-manager .address-add:after,
+.address-manager .address-add:hover:after,
+.address-manager .address-add:hover,
+.address-manager .address-add.active,
+.address-manager .address-add.active,
+.address-open.address-add.active:after {
+    background: #b5ecbf;
 }
 
 .address-manager .address-content {

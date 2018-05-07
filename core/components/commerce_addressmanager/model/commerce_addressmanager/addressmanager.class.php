@@ -187,7 +187,10 @@ class AddressManager {
      * @param order $order order ID to set comOrderAddress to. 
      * @return int|bool comAddress id
      */
-    public function addAddress($data, $type, $order = 0) {
+    public function addAddress($user, $data, $type, $order = 0) {
+        $data['remember'] = 1;
+        $data['user'] = $user;
+
         $query = $this->modx->newObject("comAddress");
         $query->fromArray($data);
         $query->save();
@@ -196,7 +199,7 @@ class AddressManager {
             return false;
         }
 
-        $this->attachOrderAddress($comAddress, $type, $order);
+        $this->attachOrderAddress($query, $type, $order);
 
         return $query->get('id');
     }
