@@ -1,0 +1,78 @@
+.address-wrapper *, .address-wrapper *:before, .address-wrapper *:after {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.address-manager {
+    display: flex;
+    flex-direction: row;
+}
+
+.address-manager .address-column {
+    flex: 1 0 0;
+}
+
+.address-manager .address-row {
+    position: relative;
+    margin-bottom: 10px;
+    width:100%;
+    color:#FFF;
+    overflow: hidden;
+    padding: 0 5px;
+}
+
+.address-manager .address-open {
+    padding: 0 0 0 1rem;
+    outline: none;
+    width: 100%;
+    text-align: left;
+    background: #efefef;
+    line-height: 3;
+    transition: all 400ms;
+}
+
+.address-manager .address-open:hover, .address-manager .address-open.active {
+    background: #dcdcdc;
+}
+
+.address-manager .address-open:after {
+    content: '+';
+    color: #777;
+    float: right;
+    background: #e6e6e6;
+    padding: 0px 20px;
+    transition: background 400ms;
+}
+
+.address-manager .address-open:hover:after {
+    background: #dcdcdc;
+}
+
+.address-manager .address-open.active:after {
+    background: #dcdcdc;
+    content: '\2013';
+}
+
+.address-manager .address-content {
+    max-height: 0;
+    background: #fdfdfd;
+    border: solid 1px #efefef;
+    border-top: none;
+    overflow: hidden;
+    color: #000;
+    transition: max-height 400ms;
+}
+
+.address-manager .address-content > div {
+    padding: 1rem;
+}
+
+@media screen and (max-width: 767px) {
+    .address-manager {
+        flex-direction: column;
+    }
+    .address-manager .address-open:after {
+        background: none;
+    }
+}

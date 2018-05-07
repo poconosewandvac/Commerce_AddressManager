@@ -46,6 +46,22 @@ class AddressManager {
     }
 
     /**
+     * Register frontend assets
+     *
+     * @param boolean $css Registers CSS
+     * @param boolean $js Registers JS
+     * @return void
+     */
+    public function registerAssets($css = true, $js = true) {
+        if ($css) {
+            $this->modx->regClientCSS($this->config['cssUrl'] . 'addressmanager.css');
+        }
+        if ($js) {
+            $this->modx->regClientScript($this->config['jsUrl'] . 'addressmanager.js');
+        }
+    }
+
+    /**
      * Gets the user id
      * 
      * @return int
@@ -139,7 +155,7 @@ class AddressManager {
             $comAddress = $this->modx->newObject('comAddress');
             $comAddress->fromArray($newAddress);
             $comAddress->save();
-            
+
             $this->attachOrderAddress($comAddress, $type, $order);
             return $comAddress->get('id');
         }
@@ -148,8 +164,7 @@ class AddressManager {
     /**
      * Add an empty order address to an address 
      * 
-     * @param int $address comAddress instance
-     * @param array $data array of values (where key matches comAddress column name)
+     * @param comAddress $address comAddress instance
      * @param string $type type of address (shipping|billing)
      * @param order $order order ID to set comOrderAddress to. 
      * @return int|bool comAddress id

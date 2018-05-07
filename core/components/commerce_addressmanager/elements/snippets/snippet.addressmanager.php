@@ -40,8 +40,6 @@ if (isset($_REQUEST["edit"]) && (int)$_REQUEST["edit"] > 0) {
         }
         return $modx->getChunk($editTpl, $edit->toArray());
     }
-    
-
 }
 
 
@@ -52,12 +50,12 @@ if (isset($_REQUEST["delete"]) && (int)$_REQUEST["edit"] > 0) {
 // Load user's addresses
 $shipping = $addressMgr->getAddresses("shipping");
 foreach ($shipping as $a) {
-    $shippingAddresses .= $modx->getChunk($tpl, $a->toArray());
+    $shippingAddresses .= $modx->getChunk($tpl, array_merge($a->toArray(), ['editTpl' => $editTpl]));
 }
 
 $billing = $addressMgr->getAddresses("billing");
 foreach ($billing as $a) {
-    $billingAddresses .= $modx->getChunk($tpl, $a->toArray());
+    $billingAddresses .= $modx->getChunk($tpl, array_merge($a->toArray(), ['editTpl' => $editTpl]));
 }
 
 return $modx->getChunk($tplWrapper, ["shipping" => $shippingAddresses, "billing" => $billingAddresses]);
