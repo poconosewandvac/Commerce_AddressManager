@@ -1,55 +1,18 @@
 # Commerce_AddressManager
 
-## In development
-
-Let registered customers view and edit their saved comAddress addresses.
+Let registered customers view and edit their saved addresses. Requires Modmore's Commerce to use https://www.modmore.com/commerce/
 
 ## Templates
 
-...
+### Defaults
 
-### Included
+This extra comes included with a minmalistic frontend CSS and JS that are automatically included on the page when the snippet is loaded. They have been designed to be as unobtrusive to your site as possible, using only vanilla JS and CSS targeting only within the address form. However, if you want to customize or not use them, you can turn them with the registerCss and registerJs snippet properties (set to 0).
 
-...
+### Chunks
 
-### Basic Template (no registered assets)
+There are 4 customizable chunks you can override based on your needs.
 
-Sample AddressManagerEdit:
-
-```HTML
-<h4>Edit Address</h4>
-<form action="[[~[[*id]]]]?edit=[[+id]]" method="POST">
-    <input type="text" name="values[fullname]" value="[[+fullname]]">
-    <input type="text" name="values[address1]" value="[[+address1]]">
-    <input type="text" name="values[city]" value="[[+city]]">
-    <input type="text" name="values[state]" value="[[+state]]">
-    <input type="text" name="values[country]" value="[[+country]]">
-    <input type="text" name="values[zip]" value="[[+zip]]">
-    <input type="tel" name="values[phone]" value="[[+phone]]">
-    <input type="email" name="values[email]" value="[[+email]]">
-    <button type="submit">Save</button>
-</form>
-```
-
-Sample AddressManagerRow:
-
-```HTML
-<div>
-    <p>[[+fullname]]</p>
-    <p>[[+address1]]</p>
-    <p>[[+city]], [[+state]] [[+country]] [[+zip]]</p>
-    <p>[[+phone]] - [[+email]]</p>
-    <a href="[[~[[*id]]]]?edit=[[+id]]">Edit</a></a>
-    <a href="[[~[[*id]]]]?delete=[[+id]]">Delete</a>
-    <hr>
-</div>
-```
-
-Sample AddressManagerWrap:
-
-```HTML
-<h4>Shipping Addresses</h4>
-[[+shipping]]
-<h4>Billing Addresses</h4>
-[[+billing]]
-```
+- tpl - This is the row of the item in the column. In the default chunk, it displays the wrapper around the editTpl.
+- tplWrapper - Surrounds everything, used for positioning the other chunks.
+- editTpl - All the input fields, delete button, and save button.
+- addTpl - By default, this uses the same chunk as editTpl, however you can customize this separately if needed.
