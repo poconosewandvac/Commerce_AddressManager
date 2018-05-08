@@ -1,4 +1,5 @@
 var addresses = document.querySelectorAll(".address-open");
+var deleteButtons = document.querySelectorAll(".address-button-delete");
 
 for (var i = 0; i < addresses.length; i++) {
     addresses[i].addEventListener("click", function () {
@@ -10,5 +11,11 @@ for (var i = 0; i < addresses.length; i++) {
         } else {
             addressPane.style.maxHeight = addressPane.scrollHeight + "px";
         }
+    });
+}
+
+for (var i = 0; i < deleteButtons.length; i++) {
+    deleteButtons[i].addEventListener("click", function (e) {
+        if (!confirm("Are you sure you want to delete this address?")) e.preventDefault();
     });
 }
