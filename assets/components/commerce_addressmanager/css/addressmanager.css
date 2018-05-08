@@ -28,6 +28,10 @@
     margin-top: 40px;
 }
 
+.address-manager .address-row input {
+    width: 100%;
+}
+
 .address-manager .address-open {
     padding: 0 0 0 1rem;
     outline: none;

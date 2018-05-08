@@ -1,6 +1,6 @@
 <?php
 /**
- * Commerce_AddressManager
+ * Commerce_AddressManager build transport script
  */
 
 $mtime = microtime();
@@ -14,9 +14,12 @@ $root = dirname(dirname(__FILE__)) . '/';
 $sources= array (
     'root' => $root,
     'build' => $root . '_build/',
+    'resolvers' => $root . '_build/resolvers/',
     'source_core' => $root . 'core/components/commerce_addressmanager',
+    'source_assets' => $root . 'assets/components/commerce_addressmanager',
     'data' => $root . '_build/data/',
     'docs' => $root . 'core/components/commerce_addressmanager/docs/',
+    'model' => $root . 'core/components/commerce_addressmanager/model/'
 );
 unset($root);
 
@@ -30,7 +33,7 @@ $modx->setLogTarget(XPDO_CLI_MODE ? 'ECHO' : 'HTML');
 
 /* set package info */
 define('PKG_NAME','Commerce_AddressManager');
-define('PKG_VERSION','0.0.1');
+define('PKG_VERSION','1.0.0');
 define('PKG_RELEASE','dev');
 
 /* load builder */
@@ -87,6 +90,13 @@ $vehicle = $builder->createVehicle($category,$attr);
 $vehicle->resolve('file',array(
     'source' => $sources['source_core'],
     'target' => "return MODX_CORE_PATH . 'components/';",
+));
+$vehicle->resolve('php',array(
+    'source' => $sources['resolvers'] . 'addressmanager.resolver.php',
+));
+$vehicle->resolve('file',array(
+    'source' => $sources['source_assets'],
+    'target' => "return MODX_ASSETS_PATH . 'components/';",
 ));
 
 $builder->putVehicle($vehicle);

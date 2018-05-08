@@ -31,6 +31,6 @@
 
     <input type="hidden" name="[[!+methodType:default=`edit`]]" value="[[!+id:default=`1`]]">
     <input type="hidden" name="type" value="[[!+addressType]]">
-    <button class="button" type="submit">Save</button>
-    [[+methodType:isnot=`add`:then=`<a class="button alert hollow float-right" href="[[~[[*id]]]]?delete=[[!+id]]"><i class="fa fa-trash" aria-hidden="true"></i> Delete</a>`]]
+    <button class="address-button-save" type="submit">Save</button>
+    [[+methodType:isnot=`add`:then=`<a class="address-button-delete" href="[[~[[*id]]]]?delete=[[!+id]]">Delete</a>`]]
 </form>

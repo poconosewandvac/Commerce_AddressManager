@@ -13,7 +13,7 @@ $snippets[0] = $modx->newObject('modSnippet');
 $snippets[0]->fromArray(array(
     'id' => 0,
     'name' => 'AddressManager',
-    'description' => 'Let customers manage their Commerce comAddress addresses.',
+    'description' => 'Include this on a page to let customers manage their Commerce comAddress addresses.',
     'snippet' => getSnippetContent($sources['source_core'].'/elements/snippets/snippet.addressmanager.php'),
 ),'',true,true);
 

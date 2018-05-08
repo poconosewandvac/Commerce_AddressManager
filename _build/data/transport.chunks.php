@@ -6,22 +6,29 @@ function getChunkContent($filename) {
 }
 
 $chunks = array();
-/*
+
 $chunks[0] = $modx->newObject('modChunk');
 $chunks[0]->fromArray(array(
     'id' => 0,
-    'name' => 'GetGuestOrderForm',
-    'description' => 'Default form of guest order checker with zip code verification.',
-    'snippet' => getChunkContent($sources['source_core'].'/elements/chunks/chunk.guestorderform.tpl'),
+    'name' => 'AddressManagerEdit',
+    'description' => 'Default input editing/adding form for Commerce_AddressManager.',
+    'snippet' => getChunkContent($sources['source_core'].'/elements/chunks/chunk.addressmanageredit.tpl'),
 ),'',true,true);
 
 $chunks[1] = $modx->newObject('modChunk');
 $chunks[1]->fromArray(array(
     'id' => 0,
-    'name' => 'GetGuestOrderError',
-    'description' => 'Default error form for guest order verification.',
-    'snippet' => getChunkContent($sources['source_core'].'/elements/chunks/chunk.guestordererror.tpl'),
+    'name' => 'AddressManagerWrap',
+    'description' => 'Default wrapper for Commerce_AddressManager.',
+    'snippet' => getChunkContent($sources['source_core'].'/elements/chunks/chunk.addressmanagerwrap.tpl'),
 ),'',true,true);
-*/
+
+$chunks[2] = $modx->newObject('modChunk');
+$chunks[2]->fromArray(array(
+    'id' => 0,
+    'name' => 'AddressManagerRow',
+    'description' => 'Default row for Commerce_AddressManager.',
+    'snippet' => getChunkContent($sources['source_core'].'/elements/chunks/chunk.addressmanagerrow.tpl'),
+),'',true,true);
 
 return $chunks;
