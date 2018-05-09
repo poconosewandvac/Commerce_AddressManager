@@ -13,6 +13,7 @@ class AddressManager {
     public $commerce;
     public $config = [];
     public $errors = [];
+    private $allowedTypes = ["shipping", "billing"];
 
     /**
      * Initialize modX, Commerce, and user
@@ -201,7 +202,7 @@ class AddressManager {
             }
 
             // Get address type if not statically set. @TODO make this into function
-            if (!$type) {
+            if (!$type || !in_array($type, $allowedTypes)) {
                 $comAddressType = $this->modx->newQuery('comOrderAddress');
                 $comAddressType->where([
                     'address' => $oldAddress->get('id')
@@ -252,7 +253,7 @@ class AddressManager {
         $data['remember'] = 1;
         $data['user'] = $user;
 
-        if (!$this->validateAddress($data)) {
+        if (!$this->validateAddress($data) || !in_array($type, $allowedTypes)) {
             return false;
         }
 
