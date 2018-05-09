@@ -12,6 +12,7 @@ class AddressManager {
     public $user;
     public $commerce;
     public $config = [];
+    public $errors = [];
 
     /**
      * Initialize modX, Commerce, and user
@@ -23,6 +24,7 @@ class AddressManager {
         // Initialize AddressManager
         $this->modx =& $modx;
         $this->user = $config['user'];
+
         $basePath = $this->modx->getOption('commerce_addressmanager.core_path', $config, $this->modx->getOption('core_path').'components/commerce_addressmanager/');
         $assetsUrl = $this->modx->getOption('commerce_addressmanager.assets_url', $config, $this->modx->getOption('assets_url').'components/commerce_addressmanager/');
 
@@ -38,6 +40,7 @@ class AddressManager {
             'jsUrl' => $assetsUrl.'js/',
             'connectorUrl' => $assetsUrl.'connector.php'
         ]);
+        $this->config['requiredFields'] = array_map('trim', explode(',', $config['requiredFields']));
 
         // Load Commerce
         $commercePath = $this->modx->getOption('commerce.core_path', null, $this->modx->getOption('core_path') . 'components/commerce/') . 'model/commerce/';
@@ -68,6 +71,25 @@ class AddressManager {
      */
     public function getUser() {
         return $this->user;
+    }
+
+    /**
+     * Adds address validation error
+     *
+     * @param string Field
+     * @return void
+     */
+    public function addAddressError($key) {
+        $this->addressErrors[] = $key;
+    }
+
+    /**
+     * Gets all address validation errors
+     *
+     * @return array
+     */
+    public function getAddressErrors() {
+        return $this->addressErrors;
     }
 
     /**
@@ -109,6 +131,25 @@ class AddressManager {
     }
 
     /**
+     * Basic validation to ensure required fields are not blank.
+     *
+     * @param comAddress $address
+     * @return bool
+     */
+    public function validateAddress($fields) {
+        $valid = true;
+
+        foreach ($fields as $key => $value) {
+            if (in_array($key, $this->config['requiredFields']) && empty($value)) {
+                $this->addAddressError($key);
+                $valid = false;
+            }
+        }
+
+        return $valid;
+    }
+
+    /**
      * "Deletes" a user's address. It only sets the remember column to 0 as to keep old orders displaying the same.
      * 
      * @param int $id comAddress id
@@ -139,6 +180,11 @@ class AddressManager {
         if ($oldAddress->toArray() === $newAddress) {
             return $oldAddress->get('id');
         } else {
+
+            if (!$this->validateAddress($newAddress)) {
+                return false;
+            }
+
             // Get address type if not statically set. @TODO make this into function
             if (!$type) {
                 $comAddressType = $this->modx->newQuery('comOrderAddress');
@@ -190,6 +236,10 @@ class AddressManager {
     public function addAddress($user, $data, $type, $order = 0) {
         $data['remember'] = 1;
         $data['user'] = $user;
+
+        if (!$this->validateAddress($data)) {
+            return false;
+        }
 
         $query = $this->modx->newObject("comAddress");
         $query->fromArray($data);

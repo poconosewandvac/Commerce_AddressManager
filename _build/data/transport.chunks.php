@@ -31,4 +31,12 @@ $chunks[2]->fromArray(array(
     'snippet' => getChunkContent($sources['source_core'].'/elements/chunks/chunk.addressmanagerrow.tpl'),
 ),'',true,true);
 
+$chunks[3] = $modx->newObject('modChunk');
+$chunks[3]->fromArray(array(
+    'id' => 0,
+    'name' => 'AddressManagerError',
+    'description' => 'Default template for displaying address validation errors.',
+    'snippet' => getChunkContent($sources['source_core'].'/elements/chunks/chunk.addressmanagererror.tpl'),
+),'',true,true);
+
 return $chunks;

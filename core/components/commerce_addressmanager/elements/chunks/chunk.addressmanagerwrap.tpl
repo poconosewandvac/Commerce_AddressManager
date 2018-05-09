@@ -1,4 +1,9 @@
 <div class="address-wrapper">
+    [[+address_error:notempty=`
+        <div class="address-error">
+            [[+address_error]]
+        </div>
+    `]]
     <div class="address-manager">
         <div class="address-column shipping-addresses">
             <h4>Shipping Addresses</h4>

@@ -10,8 +10,11 @@
 $tpl = $modx->getOption("tpl", $scriptProperties, "AddressManagerRow");
 $editTpl = $modx->getOption("editTpl", $scriptProperties, "AddressManagerEdit");
 $addTpl = $modx->getOption("addTpl", $scriptProperties, "AddressManagerEdit");
+$errorTpl = $modx->getOption("editTpl", $scriptProperties, "AddressManagerError");
+$errorPlaceholder = $modx->getOption("errorPlaceholder", $scriptProperties, "address_error");
 $tplWrapper = $modx->getOption("tplWrapper", $scriptProperties, "AddressManagerWrap");
 $values = $modx->getOption("values", $scriptProperties, $_REQUEST["values"]);
+$requiredFields = $modx->getOption("requiredFields", $scriptProperties, "fullname, email, address1, zip, city, state, country, phone");
 $registerCss = (bool)$modx->getOption("registerCss", $scriptProperties, true);
 $registerJs = (bool)$modx->getOption("registerJs", $scriptProperties, true);
 
@@ -22,7 +25,7 @@ if (!$user) {
 }
 
 // Load AddressManager class
-$addressMgr = $modx->getService('addressmanager','AddressManager', $modx->getOption('commerce_addressmanager.core_path', null, $modx->getOption('core_path').'components/commerce_addressmanager/').'model/commerce_addressmanager/', [$scriptProperties, 'user' => $user]);
+$addressMgr = $modx->getService('addressmanager','AddressManager', $modx->getOption('commerce_addressmanager.core_path', null, $modx->getOption('core_path').'components/commerce_addressmanager/').'model/commerce_addressmanager/', [$scriptProperties, 'user' => $user, 'requiredFields' => $requiredFields]);
 if (!($addressMgr instanceof AddressManager) && !($addressMgr->commerce instanceof Commerce)) return '';
 if ($addressMgr->commerce->isDisabled()) {
     return $modx->lexicon('commerce.mode.disabled.message');
@@ -36,18 +39,34 @@ $modx->lexicon->load('commerce:frontend');
 $addressMgr->registerAssets($registerCss, $registerJs);
 
 // Handle adding
-if (isset($_REQUEST["add"]) && isset($_REQUEST["type"])) {
+if (isset($_REQUEST["add"]) && isset($_REQUEST["type"]) && is_array($values)) {
     $addressMgr->addAddress($user, $values, $_REQUEST["type"]);
-    $modx->sendRedirect($modx->makeUrl($modx->resource->get('id')));
+    
+    if (!empty($addressMgr->getAddressErrors())) {
+        foreach ($addressMgr->getAddressErrors() as $key) {
+            $errors .= $modx->getChunk($errorTpl, ['key' => $key]);
+        }
+        $modx->setPlaceholder($errorPlaceholder, $errors);
+    } else {
+        $modx->sendRedirect($modx->makeUrl($modx->resource->get('id')));
+    }
 }
 
 // Handle editing
-if (isset($_REQUEST["edit"]) && (int)$_REQUEST["edit"] > 0) {
+if ((int)$_REQUEST["edit"] > 0 && is_array($values)) {
     $edit = $addressMgr->getAddress($_REQUEST["edit"]);
     
-    if ($edit && is_array($values)) {
+    if ($edit) {
         $newAddress = $addressMgr->editAddress($edit, $values);
-        $modx->sendRedirect($modx->makeUrl($modx->resource->get('id')));
+        
+        if (!empty($addressMgr->getAddressErrors())) {
+            foreach ($addressMgr->getAddressErrors() as $key) {
+                $errors .= $modx->getChunk($errorTpl, ['key' => $key]);
+            }
+            $modx->setPlaceholder($errorPlaceholder, $errors);
+        } else {
+            $modx->sendRedirect($modx->makeUrl($modx->resource->get('id')));
+        }
     }
 }
 
