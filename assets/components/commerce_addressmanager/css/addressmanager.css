@@ -4,6 +4,15 @@
     box-sizing: border-box;
 }
 
+.address-wrapper .address-error {
+    background: #fcd6d6;
+    padding: 15px;
+}
+
+.address-wrapper .address-error p:last-child {
+    margin-bottom: 0px;
+}
+
 .address-manager {
     display: flex;
     flex-direction: row;
