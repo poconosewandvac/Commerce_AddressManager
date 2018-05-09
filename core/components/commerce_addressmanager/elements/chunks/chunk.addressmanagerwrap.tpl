@@ -6,7 +6,7 @@
     `]]
     <div class="address-manager">
         <div class="address-column shipping-addresses">
-            <h4>Shipping Addresses</h4>
+            <h4>[[%commerce.shipping_address]]</h4>
             
             <div>
                 [[+shipping]]
@@ -22,7 +22,7 @@
             </div>
         </div>
         <div class="address-column billing-addresses">
-            <h4>Billing Addresses</h4>
+            <h4>[[%commerce.billing_address]]</h4>
             
             <div>
                 [[+billing]]

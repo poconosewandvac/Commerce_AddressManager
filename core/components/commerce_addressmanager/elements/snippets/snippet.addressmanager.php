@@ -43,8 +43,8 @@ if (isset($_REQUEST["add"]) && isset($_REQUEST["type"]) && is_array($values)) {
     $addressMgr->addAddress($user, $values, $_REQUEST["type"]);
     
     if (!empty($addressMgr->getAddressErrors())) {
-        foreach ($addressMgr->getAddressErrors() as $key) {
-            $errors .= $modx->getChunk($errorTpl, ['key' => $key]);
+        foreach ($addressMgr->getAddressErrors() as $key => $value) {
+            $errors .= $modx->getChunk($errorTpl, ['field' => $key, 'lexicon' => $value]);
         }
         $modx->setPlaceholder($errorPlaceholder, $errors);
     } else {
@@ -61,7 +61,7 @@ if ((int)$_REQUEST["edit"] > 0 && is_array($values)) {
         
         if (!empty($addressMgr->getAddressErrors())) {
             foreach ($addressMgr->getAddressErrors() as $key) {
-                $errors .= $modx->getChunk($errorTpl, ['key' => $key]);
+                $errors .= $modx->getChunk($errorTpl, ['field' => $key, 'lexicon' => $value]);
             }
             $modx->setPlaceholder($errorPlaceholder, $errors);
         } else {

@@ -80,7 +80,22 @@ class AddressManager {
      * @return void
      */
     public function addAddressError($key) {
-        $this->addressErrors[] = $key;
+        // Get the correct lexicon to identify the field.
+        switch ($key) {
+            case "fullname":
+                $value = "commerce.address.name";
+                break;
+
+            case "address1":
+                $value = "commerce.address.address";
+                break;
+
+            default:
+                $value = "commerce.address." . $key;
+                break;
+        }
+
+        $this->addressErrors[$key] = $value;
     }
 
     /**

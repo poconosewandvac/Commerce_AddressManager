@@ -1,1 +1,1 @@
-<p>[[+key]] is a required field.</p>
+<p>[[%[[+lexicon]]]] is a required field.</p>
