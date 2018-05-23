@@ -202,7 +202,7 @@ class AddressManager {
             }
 
             // Get address type if not statically set. @TODO make this into function
-            if (!$type || !in_array($type, $allowedTypes)) {
+            if (!$type || !in_array($type, $this->allowedTypes)) {
                 $comAddressType = $this->modx->newQuery('comOrderAddress');
                 $comAddressType->where([
                     'address' => $oldAddress->get('id')
