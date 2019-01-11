@@ -1,0 +1,39 @@
+<div class="address-wrapper">
+    {% if errors %}
+        <div class="address-error">
+            {{ errors }}
+        </div>
+    {% endif %}
+    <div class="address-manager">
+        <div class="address-column shipping-addresses">
+            <h4>{{ lex('commerce.shipping_address') }}</h4>
+            
+            <div>
+                {% for shipping_address in shipping_addresses %}
+                    {% include 'addressmanager/edit.twig' with {
+                        'address': shipping_address
+                    } %}
+                {% endfor %}
+            
+                {% include 'addressmanager/add.twig' with {
+                    'type' : 'shipping'
+                } %}
+            </div>
+        </div>
+        <div class="address-column billing-addresses">
+            <h4>{{ lex('commerce.billing_address') }}</h4>
+            
+            <div>
+                {% for billing_address in billing_addresses %}
+                    {% include 'addressmanager/edit.twig' with {
+                        'address': billing_address
+                    } %}
+                {% endfor %}
+                
+                {% include 'addressmanager/add.twig' with {
+                    'type' : 'billing'
+                } %}
+            </div>
+        </div>
+    </div>
+</div>
