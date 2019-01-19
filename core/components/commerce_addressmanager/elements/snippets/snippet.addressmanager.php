@@ -6,17 +6,20 @@
  * https://github.com/poconosewandvac/Commerce_AddressManager
  */
 
-// Properties
-$tpl = $modx->getOption("tpl", $scriptProperties, "AddressManagerRow");
-$editTpl = $modx->getOption("editTpl", $scriptProperties, "AddressManagerEdit");
-$addTpl = $modx->getOption("addTpl", $scriptProperties, "AddressManagerEdit");
-$errorTpl = $modx->getOption("editTpl", $scriptProperties, "AddressManagerError");
+// Legacy chunk templates
+$tpl = $modx->getOption("tpl", $scriptProperties);
+$editTpl = $modx->getOption("editTpl", $scriptProperties);
+$addTpl = $modx->getOption("addTpl", $scriptProperties);
+$errorTpl = $modx->getOption("editTpl", $scriptProperties);
 $errorPlaceholder = $modx->getOption("errorPlaceholder", $scriptProperties, "address_error");
-$tplWrapper = $modx->getOption("tplWrapper", $scriptProperties, "AddressManagerWrap");
+$tplWrapper = $modx->getOption("tplWrapper", $scriptProperties);
+
+// Properties
 $values = $modx->getOption("values", $scriptProperties, $_REQUEST["values"]);
 $requiredFields = $modx->getOption("requiredFields", $scriptProperties, "fullname, email, address1, zip, city, state, country, phone");
 $registerCss = (bool)$modx->getOption("registerCss", $scriptProperties, true);
 $registerJs = (bool)$modx->getOption("registerJs", $scriptProperties, true);
+$pageId = $modx->resource->get('id');
 
 // Check if user is logged in
 $user = $modx->user->get('id');
@@ -48,7 +51,7 @@ if (isset($_REQUEST["add"]) && isset($_REQUEST["type"]) && is_array($values)) {
         }
         $modx->setPlaceholder($errorPlaceholder, $errors);
     } else {
-        $modx->sendRedirect($modx->makeUrl($modx->resource->get('id')));
+        $modx->sendRedirect($modx->makeUrl($pageId));
     }
 }
 
@@ -65,7 +68,7 @@ if ((int)$_REQUEST["edit"] > 0 && is_array($values)) {
             }
             $modx->setPlaceholder($errorPlaceholder, $errors);
         } else {
-            $modx->sendRedirect($modx->makeUrl($modx->resource->get('id')));
+            $modx->sendRedirect($modx->makeUrl($pageId));
         }
     }
 }
@@ -73,18 +76,34 @@ if ((int)$_REQUEST["edit"] > 0 && is_array($values)) {
 // Handle deletes.
 if (isset($_REQUEST["delete"]) && (int)$_REQUEST["delete"] > 0) {
     $addressMgr->deleteAddress($_REQUEST["delete"]);
-    $modx->sendRedirect($modx->makeUrl($modx->resource->get('id')));
+    $modx->sendRedirect($modx->makeUrl($pageId));
 }
 
 // Load user's addresses
-$shipping = $addressMgr->getAddresses("shipping");
-$billing = $addressMgr->getAddresses("billing");
+$shippingAddresses = $addressMgr->getAddresses("shipping");
+$billingAddresses = $addressMgr->getAddresses("billing");
 
-foreach ($shipping as $a) {
-    $shippingAddresses .= $modx->getChunk($tpl, array_merge($a->toArray(), ['editTpl' => $editTpl]));
-}
-foreach ($billing as $a) {
-    $billingAddresses .= $modx->getChunk($tpl, array_merge($a->toArray(), ['editTpl' => $editTpl]));
+// Support legacy installations of Address Manager using MODX chunks for tpls
+// This may be removed in the future
+if (!empty($tpl)) {
+    foreach ($shippingAddresses as $a) {
+        $shipping .= $modx->getChunk($tpl, array_merge($a->toArray(), ['editTpl' => $editTpl]));
+    }
+    foreach ($billingAddresses as $a) {
+        $billing .= $modx->getChunk($tpl, array_merge($a->toArray(), ['editTpl' => $editTpl]));
+    }
+
+    return $modx->getChunk($tplWrapper, ["shipping" => $shipping, "billing" => $billing, "addTpl" => $addTpl]);
 }
 
-return $modx->getChunk($tplWrapper, ["shipping" => $shippingAddresses, "billing" => $billingAddresses, "addTpl" => $addTpl]);
+$templatePath = $modx->getOption('commerce_addressmanager.core_path', null, $modx->getOption('core_path').'components/commerce_addressmanager/') . 'templates/';
+$loader = $addressMgr->commerce->twig->getLoader();
+$loader->addLoader(new Twig\Loader\FilesystemLoader($templatePath));
+
+$output = $addressMgr->commerce->twig->render('addressmanager/manager.twig', [
+    'shipping_addresses' => $shippingAddresses,
+    'billing_addresses' => $billingAddresses,
+    'link' => $modx->makeUrl($pageId),
+    'errors' => $errors ?? '',
+]);
+return $addressMgr->commerce->adapter->parseMODXTags($output);

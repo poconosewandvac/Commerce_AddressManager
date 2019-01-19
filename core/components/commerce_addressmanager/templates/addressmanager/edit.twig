@@ -1,0 +1,43 @@
+<div class="address-row">
+    <button class="address-open">{{ address.fullname|e }} - {{ address.address1|e }}</button>
+    <div class="address-content">
+        <div>
+            <form action="{{ link }}" method="POST">
+                <label for="fullname-{{ address.id }}">{{ lex('commerce.address.name') }}</label>
+                <input id="fullname-{{ address.id }}" type="text" name="values[fullname]" value="{{ address.fullname }}" required>
+                    
+                <label for="email-{{ address.id }}">{{ lex('commerce.address.email') }}</label>
+                <input id="email-{{ address.id }}" type="email" name="values[email]" value="{{ address.email }}" required>
+                    
+                <label for="company-{{ address.id }}">{{ lex('commerce.address.company') }} <small>{{ lex('commerce.address.optional') }}</small></label>
+                <input id="company-{{ address.id }}" type="text" name="values[company]" value="{{ address.company }}">
+
+                <label for="address1-{{ address.id }}">{{ lex('commerce.address.address') }}</label>
+                <input id="address1-{{ address.id }}" type="text" name="values[address1]" value="{{ address.address1 }}" required>
+                    
+                <label for="address2-{{ address.id }}">{{ lex('commerce.address.address2') }} <small>{{ lex('commerce.address.optional') }}</small></label>
+                <input id="address2-{{ address.id }}" type="text" name="values[address2]" value="{{ address.address2 }}">
+                    
+                <label for="zip-{{ address.id }}">{{ lex('commerce.address.zip') }}</label>
+                <input id="zip-{{ address.id }}" type="text" name="values[zip]" value="{{ address.zip }}" required>
+                    
+                <label for="city-{{ address.id }}">{{ lex('commerce.address.city') }}</label>
+                <input id="city-{{ address.id }}" type="text" name="values[city]" value="{{ address.city }}" required>
+                    
+                <label for="state-{{ address.id }}">{{ lex('commerce.address.state') }}</label>
+                <input id="state-{{ address.id }}" type="text" name="values[state]" value="{{ address.state }}" required>
+                    
+                <label for="country-{{ address.id }}">{{ lex('commerce.address.country') }}</label>
+                <input id="country-{{ address.id }}" type="text" name="values[country]" value="{{ address.country }}" required>
+                    
+                <label for="phone-{{ address.id }}">{{ lex('commerce.address.phone') }}</label>
+                <input id="phone-{{ address.id }}" type="tel" name="values[phone]" value="{{ address.phone }}" required>
+
+                <input type="hidden" name="edit" value="{{ address.id }}">
+                <input type="hidden" name="type" value="{{ address.type }}">
+                <button class="button address-button-save" type="submit">Save</button>
+                <a class="button hollow alert float-right address-button-delete" href="{{ link }}?delete={{ address.id }}">Delete</a>
+            </form>
+        </div>
+    </div>
+</div>

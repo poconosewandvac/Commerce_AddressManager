@@ -115,17 +115,11 @@ class AddressManager {
      * @return comAddress xPDOObjects collection
      */
     public function getAddresses($type) {
-        $query = $this->modx->newQuery('comAddress');
-        $query->select('comOrderAddress.type');
-        $query->select($this->modx->getSelectColumns('comAddress', 'comAddress'));
-        $query->innerJoin('comOrderAddress','comOrderAddress', ["comAddress.id = comOrderAddress.address"]);
-        $query->where([
-            'comOrderAddress.type:=' => $type,
-            'comAddress.user:=' => $this->getUser(),
-            'comAddress.remember:=' => 1
+        return $this->modx->getCollection('comAddress', [
+            'user' => $this->getUser(),
+            'type' => $type,
+            'remember' => 1
         ]);
-
-        return $this->modx->getCollection('comAddress', $query);
     }
 
     /**
@@ -136,14 +130,11 @@ class AddressManager {
      * @return comAddress xPDOObject
      */
     public function getAddress($id, $remember = 1) {
-        $query = $this->modx->newQuery('comAddress');
-        $query->where([
+        return $this->modx->getObject('comAddress', [
             'id' => $id,
             'user' => $this->getUser(),
             'remember' => $remember
         ]);
-
-        return $this->modx->getObject('comAddress', $query);
     }
 
     /**
@@ -195,50 +186,21 @@ class AddressManager {
         // Check if the address is the same before adding another, no need for duplicates
         if ($oldAddress->toArray() === $newAddress) {
             return $oldAddress->get('id');
-        } else {
-
-            if (!$this->validateAddress($newAddress)) {
-                return false;
-            }
-
-            // Get address type if not statically set. @TODO make this into function
-            if (!$type || !in_array($type, $this->allowedTypes)) {
-                $comAddressType = $this->modx->newQuery('comOrderAddress');
-                $comAddressType->where([
-                    'address' => $oldAddress->get('id')
-                ]);
-                $type = $this->modx->getObject('comOrderAddress', $comAddressType)->get('type');
-            }
-
-            $oldAddress->set('remember', 0);
-            $oldAddress->save();
-
-            unset($newAddress['id']);
-            $comAddress = $this->modx->newObject('comAddress');
-            $comAddress->fromArray($newAddress);
-            $comAddress->save();
-
-            $this->attachOrderAddress($comAddress, $type, $order);
-            return $comAddress->get('id');
         }
-    }
+            
+        if (!$this->validateAddress($newAddress)) {
+            return false;
+        }
 
-    /**
-     * Add an empty order address to an address 
-     * 
-     * @param comAddress $address comAddress instance
-     * @param string $type type of address (shipping|billing)
-     * @param order $order order ID to set comOrderAddress to. 
-     * @return int|bool comAddress id
-     */
-    public function attachOrderAddress($address, $type, $order) {
-        $query = $this->modx->newObject('comOrderAddress');
-        $query->fromArray([
-            'order' => $order,
-            'type' => $type,
-            'address' => $address->get('id')
-        ]);
-        $query->save();
+        $oldAddress->set('remember', 0);
+        $oldAddress->save();
+
+        unset($newAddress['id']);
+        $comAddress = $this->modx->newObject('comAddress');
+        $comAddress->fromArray($newAddress);
+        $comAddress->save();
+
+        return $comAddress->get('id');
     }
 
     /**
@@ -252,8 +214,10 @@ class AddressManager {
     public function addAddress($user, $data, $type, $order = 0) {
         $data['remember'] = 1;
         $data['user'] = $user;
+        $data['type'] = $type;
 
-        if (!$this->validateAddress($data) || !in_array($type, $allowedTypes)) {
+        if (!$this->validateAddress($data) || !in_array($type, $this->allowedTypes)) {
+            $this->modx->log(1, 'bad');
             return false;
         }
 
@@ -264,8 +228,6 @@ class AddressManager {
         if (!$query) {
             return false;
         }
-
-        $this->attachOrderAddress($query, $type, $order);
 
         return $query->get('id');
     }
