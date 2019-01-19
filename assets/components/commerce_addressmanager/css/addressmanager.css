@@ -102,6 +102,11 @@
     padding: 1rem;
 }
 
+.address-manager .address-field-error {
+    font-weight: bold;
+    color: red;
+}
+
 @media screen and (max-width: 767px) {
     .address-manager {
         flex-direction: column;
