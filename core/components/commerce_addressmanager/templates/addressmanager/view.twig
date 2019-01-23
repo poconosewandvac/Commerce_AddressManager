@@ -1,0 +1,29 @@
+{% extends 'addressmanager/manager.twig' %}
+
+{% block content %}
+
+<div>
+    <h2>Address</h2>
+    <p>
+        {{ address.fullname }}<br>
+        {{ address.address1 }}<br>
+        {{ address.address2 }}<br>
+        {{ address.city }}, {{ address.state }} {{ address.zip }} {{ address.country }}<br>
+        {{ address.phone }} - {{ address.email }}
+    </p>
+
+    
+
+    <h2>Orders</h2>
+        {% if orders %}
+        {% for order in orders %}
+            <p>Order # {{ order.id }} - {{ order.total }}</p>
+        {% endfor %}
+        
+        {% else %}
+            <p>No orders placed with this address.</p>
+        {% endif %}
+    {# In the future this page will have access to more useful data, such as previous orders purchased with this address #}
+</div>
+
+{% endblock %}

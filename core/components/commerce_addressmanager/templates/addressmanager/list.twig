@@ -1,0 +1,32 @@
+{% extends 'addressmanager/manager.twig' %}
+
+{% block content %}
+
+<div class="address-column shipping-addresses">
+    <h4>{{ lex('commerce.shipping_address') }}</h4>
+
+    <div>
+        {% for shipping_address in shipping_addresses %}
+            {% include 'addressmanager/preview.twig' with {
+                'address' : shipping_address
+            } %}
+        {% endfor %}
+
+        <a href="{{ link }}?add=shipping" class="address-open address-add">Add Shipping Address</a>
+    </div>
+</div>
+<div class="address-column billing-addresses">
+    <h4>{{ lex('commerce.billing_address') }}</h4>
+
+    <div>
+        {% for billing_address in billing_addresses %}
+            {% include 'addressmanager/preview.twig' with {
+                'address' : billing_address
+            } %}
+        {% endfor %}
+
+        <a href="{{ link }}?add=billing" class="address-open address-add">Add Billing Address</a>
+    </div>
+</div>
+
+{% endblock %}
