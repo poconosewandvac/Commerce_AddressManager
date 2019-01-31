@@ -18,7 +18,7 @@ if (!$user) {
     $modx->sendUnauthorizedPage();
 }
 
-// Set common params for output
+// Set common params for output in all templates
 $outputParams = [
     'user' => $user,
     'link' => $modx->makeUrl($pageId),
@@ -39,13 +39,12 @@ $modx->lexicon->load('commerce:modules');
 // Register required assets if not using custom css/js
 $addressMgr->registerAssets($registerCss, $registerJs);
 
-$outputData = $addressMgr->getAction()
-    ->execute()
-    ->output();
+$action = $addressMgr->getAction();
+$outputData = $action->execute()->output();
 
 $templatePath = $modx->getOption('commerce_addressmanager.core_path', null, $modx->getOption('core_path') . 'components/commerce_addressmanager/') . 'templates/';
 $loader = $addressMgr->commerce->twig->getLoader();
 $loader->addLoader(new Twig\Loader\FilesystemLoader($templatePath));
 
-$output = $addressMgr->commerce->twig->render('addressmanager/list.twig', array_merge($outputData, $outputParams));
+$output = $addressMgr->commerce->twig->render($action->template, array_merge($outputData, $outputParams));
 return $addressMgr->commerce->adapter->parseMODXTags($output);

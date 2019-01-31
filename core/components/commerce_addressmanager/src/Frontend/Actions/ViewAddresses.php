@@ -4,6 +4,8 @@ namespace PoconoSewVac\AddressManager\Frontend\Actions;
 
 class ViewAddresses extends AddressAction
 {
+    public $template = 'addressmanager/list.twig';
+
     public function execute()
     {
         $query = $this->adapter->newQuery('comAddress');

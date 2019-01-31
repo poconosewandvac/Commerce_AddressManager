@@ -54,7 +54,7 @@ class AddressManager
         $this->loader = &$loader;
         $this->loader->add('PoconoSewVac\\AddressManager\\', __DIR__);
 
-        $basePath = $this->modx->getOption('commerce_addressmanager.core_path', $config, $this->modx->getOption('core_path') . 'components/commerce_addressmanager/');
+        $corePath = $this->modx->getOption('commerce_addressmanager.core_path', $config, $this->modx->getOption('core_path') . 'components/commerce_addressmanager/');
         $assetsUrl = $this->modx->getOption('commerce_addressmanager.assets_url', $config, $this->modx->getOption('assets_url') . 'components/commerce_addressmanager/');
         $this->fields = $_REQUEST;
 
@@ -108,9 +108,9 @@ class AddressManager
     }
 
     /**
-     * Return type of request
+     * Action factory
      *
-     * @return int
+     * @return AddressAction|null
      */
     public function getAction()
     {
@@ -122,7 +122,7 @@ class AddressManager
                 } else if (intval($this->getField('delete')) > 0) {
                     return new Actions\DeleteAddress($this->commerce->adapter, $this->user, $this->fields);
                 } else if (intval($this->getField('edit')) > 0) {
-                    return new Actions\EditAddress($this->commerce->adapter, $this->user, $this->fields);;
+                    return new Actions\EditAddress($this->commerce->adapter, $this->user, $this->fields);
                 }
 
                 break;
@@ -136,5 +136,7 @@ class AddressManager
                 
                 break;
         }
+
+        return null;
     }
 }

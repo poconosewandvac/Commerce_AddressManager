@@ -13,8 +13,16 @@ abstract class AddressAction
     
     protected $userId = 0;
     protected $fields = [];
+
+    /**
+     * Templating
+     */
+    protected $template = 'addressmanager/list.twig';
     protected $result = [];
 
+    /**
+     * Errors
+     */
     protected $errors = [];
     protected $fieldErrors = [];
 
@@ -23,7 +31,7 @@ abstract class AddressAction
     /**
      * AddressAction constructor
      *
-     * @param integer $userId logged in user's ID
+     * @param int $userId logged in user's ID
      * @param array $fields fields submitted to server
      */
     public function __construct(AdapterInterface $adapter, int $userId, array $fields)
@@ -47,11 +55,11 @@ abstract class AddressAction
      * Get an individual field from the submitted fields
      *
      * @param string $fieldName
-     * @return void
+     * @return mixed
      */
     public function getField($fieldName)
     {
-        return $this->field[$fieldName];
+        return $this->fields[$fieldName];
     }
 
     /**
