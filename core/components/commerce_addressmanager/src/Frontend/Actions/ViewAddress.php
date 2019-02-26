@@ -14,10 +14,13 @@ class ViewAddress extends AddressAction
             'id' => $this->getField('view'),
         ]);
 
-        if ($address) {
-            $this->result['address'] = $address->toArray();
+        if (!$address) {
+            header("Location: " . $this->adapter->makeResourceUrl($this->adapter->getOption('error_page', null, 1), '', '', 'full'));
+            die();
         }
 
+        $this->result['address'] = $address->toArray();
+        
         return $this;
     }
 }

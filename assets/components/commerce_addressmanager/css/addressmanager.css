@@ -13,11 +13,6 @@
     margin-bottom: 0px;
 }
 
-.address-manager {
-    display: flex;
-    flex-direction: row;
-}
-
 .address-manager .address-column {
     flex-grow: 1;
     flex-shrink: 0;

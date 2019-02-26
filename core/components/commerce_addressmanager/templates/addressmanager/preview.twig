@@ -1,3 +1,10 @@
 <div class="address-row">
-    <a href="{{ link }}?view={{ address.id }}" class="address-open">{{ address.fullname|e }} - {{ address.address1|e }}</a>
+    <a href="{{ link }}?view={{ address.id }}" class="address-open">
+        {% if address.company %}
+            {{ address.company }}
+        {% else %}
+            {{ address.fullname|e }}
+        {% endif %}
+        - {{ address.address1|e }}
+    </a>
 </div>

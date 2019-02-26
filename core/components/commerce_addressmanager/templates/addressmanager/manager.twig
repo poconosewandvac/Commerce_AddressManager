@@ -6,6 +6,12 @@
             {% endfor %}
         </div>
     {% endif %}
+    
+    {% if messages %}
+        {% for message in messages %}
+            <p class="address-message">{{ message }}</p>
+        {% endfor %}
+    {% endif %}
     <div class="address-manager">
         {% block content %}{% endblock %}
     </div>

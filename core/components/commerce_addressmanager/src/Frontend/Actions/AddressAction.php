@@ -3,7 +3,8 @@
 namespace PoconoSewVac\AddressManager\Frontend\Actions;
 
 use modmore\Commerce\Adapter\AdapterInterface;
- 
+use CommerceGuys\Intl\Country\CountryRepository;
+
 abstract class AddressAction
 {
     /**
@@ -21,10 +22,11 @@ abstract class AddressAction
     protected $result = [];
 
     /**
-     * Errors
+     * Errors/messaging
      */
     protected $errors = [];
     protected $fieldErrors = [];
+    protected $messages = [];
 
     protected $allowedTypes = ['shipping', 'billing'];
 
@@ -106,13 +108,68 @@ abstract class AddressAction
     }
 
     /**
+     * Add a message to the output
+     *
+     * @param string $message
+     * @return void
+     */
+    public function addMessage($message)
+    {
+        $this->messages[] = $message;
+    }
+
+    /**
+     * Get all messages outputted
+     *
+     * @return void
+     */
+    public function getMessages()
+    {
+        return $this->messages;
+    }
+
+    /**
+     * Get available countries
+     *
+     * @return array
+     * @todo
+     */
+    /* public function getCountries()
+    {
+        $commerceMode = $this->adapter->getOption('commerce.mode', null, 'test');
+        $countryRepo = new CountryRepository();
+
+        $countryModule = $this->adapter->getObject('comModule', [
+            'name' => 'commerce.module.address_validation.country'
+        ]);
+
+        $allowedCountries = $commerceModule->getProperty('allowed_countries');
+        $disallowedCountries = $commerceModule->getProperty('disallowed_countries');
+
+        if (
+            ($commerceMode === 'test' && $countryModule->get('enabled_in_test'))
+            || ($commerceMode === 'live' && $countryModule->get('enabled_in_live'))
+        ) {
+            // @todo
+        }
+
+        return $countryRepo->getList($this->adapter->getOption('locale'), 'en_US');
+    }*/
+
+    /**
      * Output for the action
      *
      * @return array
      */
     public function output()
     {
-        return array_merge($this->result, ['errors' => $this->errors, 'field_errors' => $this->fieldErrors]);
+        $countryRepo = new CountryRepository();
+        return array_merge($this->result, [
+            'errors' => $this->getErrors(),
+            'field_errors' => $this->getFieldErrors(),
+            'messages' => $this->getMessages(),
+            'countries' => $countryRepo->getList($this->adapter->getOption('locale'), 'en_US')
+        ]);
     }
 
     /**
