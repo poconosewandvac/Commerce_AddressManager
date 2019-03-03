@@ -1,9 +1,13 @@
 ++ AddressManager for Commerce
 
-++ Commerce_AddressManager 1.0.0-pl
-++ Released on 5/10/2018
-- Initial public release
+++ Commerce_AddressManager 1.0.2-pl
+++ Released on 3/2/2018
+- Remove deleted addresses instead of setting remember to 0.
 
-++ Commerce_AddressManager 1.0.0-dev
+++ Commerce_AddressManager 1.0.1-pl
+++ Released on 2/26/2018
+- 0.12 compatability fix
+
+++ Commerce_AddressManager 1.0.0-pl
 ++ Released on 5/8/2018
-- Initial test release
+- Initial release

@@ -7,7 +7,8 @@
  * https://github.com/poconosewandvac/Commerce_AddressManager
  */
 
-class AddressManager {
+class AddressManager
+{
     public $modx;
     public $user;
     public $commerce;
@@ -21,25 +22,26 @@ class AddressManager {
      * @param modX $modx
      * @param array $config
      */
-    public function __construct(modX &$modx, array $config = array()) {
+    public function __construct(modX &$modx, array $config = array())
+    {
         // Initialize AddressManager
-        $this->modx =& $modx;
+        $this->modx = &$modx;
         $this->user = $config['user'];
 
-        $basePath = $this->modx->getOption('commerce_addressmanager.core_path', $config, $this->modx->getOption('core_path').'components/commerce_addressmanager/');
-        $assetsUrl = $this->modx->getOption('commerce_addressmanager.assets_url', $config, $this->modx->getOption('assets_url').'components/commerce_addressmanager/');
+        $basePath = $this->modx->getOption('commerce_addressmanager.core_path', $config, $this->modx->getOption('core_path') . 'components/commerce_addressmanager/');
+        $assetsUrl = $this->modx->getOption('commerce_addressmanager.assets_url', $config, $this->modx->getOption('assets_url') . 'components/commerce_addressmanager/');
 
         $this->config = array_merge([
             'corePath' => $corePath,
-            'modelPath' => $corePath.'model/',
-            'processorsPath' => $corePath.'processors/',
-            'controllersPath' => $corePath.'controllers/',
-            'chunksPath' => $corePath.'elements/chunks/',
-            'snippetsPath' => $corePath.'elements/snippets/',
+            'modelPath' => $corePath . 'model/',
+            'processorsPath' => $corePath . 'processors/',
+            'controllersPath' => $corePath . 'controllers/',
+            'chunksPath' => $corePath . 'elements/chunks/',
+            'snippetsPath' => $corePath . 'elements/snippets/',
             'baseUrl' => $assetsUrl,
-            'cssUrl' => $assetsUrl.'css/',
-            'jsUrl' => $assetsUrl.'js/',
-            'connectorUrl' => $assetsUrl.'connector.php'
+            'cssUrl' => $assetsUrl . 'css/',
+            'jsUrl' => $assetsUrl . 'js/',
+            'connectorUrl' => $assetsUrl . 'connector.php'
         ]);
         $this->config['requiredFields'] = array_map('trim', explode(',', $config['requiredFields']));
 
@@ -56,7 +58,8 @@ class AddressManager {
      * @param boolean $js Registers JS
      * @return void
      */
-    public function registerAssets($css = true, $js = true) {
+    public function registerAssets($css = true, $js = true)
+    {
         if ($css) {
             $this->modx->regClientCSS($this->config['cssUrl'] . 'addressmanager.css');
         }
@@ -70,7 +73,8 @@ class AddressManager {
      * 
      * @return int
      */
-    public function getUser() {
+    public function getUser()
+    {
         return $this->user;
     }
 
@@ -80,7 +84,8 @@ class AddressManager {
      * @param string Field
      * @return void
      */
-    public function addAddressError($key) {
+    public function addAddressError($key)
+    {
         // Get the correct lexicon to identify the field.
         switch ($key) {
             case "fullname":
@@ -104,7 +109,8 @@ class AddressManager {
      *
      * @return array
      */
-    public function getAddressErrors() {
+    public function getAddressErrors()
+    {
         return $this->addressErrors;
     }
 
@@ -114,7 +120,8 @@ class AddressManager {
      * @param string $type Type of address, shipping or billing
      * @return comAddress xPDOObjects collection
      */
-    public function getAddresses($type) {
+    public function getAddresses($type)
+    {
         return $this->modx->getCollection('comAddress', [
             'user' => $this->getUser(),
             'type' => $type,
@@ -129,7 +136,8 @@ class AddressManager {
      * @param int $remember 0|1
      * @return comAddress xPDOObject
      */
-    public function getAddress($id, $remember = 1) {
+    public function getAddress($id, $remember = 1)
+    {
         return $this->modx->getObject('comAddress', [
             'id' => $id,
             'user' => $this->getUser(),
@@ -143,7 +151,8 @@ class AddressManager {
      * @param comAddress $address
      * @return bool
      */
-    public function validateAddress($fields) {
+    public function validateAddress($fields)
+    {
         $valid = true;
 
         foreach ($fields as $key => $value) {
@@ -162,12 +171,12 @@ class AddressManager {
      * @param int $id comAddress id
      * @return void
      */
-    public function deleteAddress($id) {
+    public function deleteAddress($id)
+    {
         $address = $this->getAddress($id);
 
         if ($address) {
-            $address->set('remember', 0);
-            $address->save();
+            $address->remove();
         }
     }
 
@@ -180,14 +189,15 @@ class AddressManager {
      * @param order $order order ID to set comOrderAddress to. 
      * @return int|bool comAddress id
      */
-    public function editAddress($oldAddress, $data, $type = null, $order = 0) {
+    public function editAddress($oldAddress, $data, $type = null, $order = 0)
+    {
         $newAddress = array_merge($oldAddress->toArray(), $data);
 
         // Check if the address is the same before adding another, no need for duplicates
         if ($oldAddress->toArray() === $newAddress) {
             return $oldAddress->get('id');
         }
-            
+
         if (!$this->validateAddress($newAddress)) {
             return false;
         }
@@ -211,13 +221,13 @@ class AddressManager {
      * @param order $order order ID to set comOrderAddress to. 
      * @return int|bool comAddress id
      */
-    public function addAddress($user, $data, $type, $order = 0) {
+    public function addAddress($user, $data, $type, $order = 0)
+    {
         $data['remember'] = 1;
         $data['user'] = $user;
         $data['type'] = $type;
 
         if (!$this->validateAddress($data) || !in_array($type, $this->allowedTypes)) {
-            $this->modx->log(1, 'bad');
             return false;
         }
 
